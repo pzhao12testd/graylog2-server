@@ -11,6 +11,8 @@ before_cache:
   $HOME/CACHE$line); mkdir -p $DIR; cp -r $line $DIR; done
 - echo CACHESIZE $(du -sk $HOME/CACHE)
 before_install:
+- wget http://mir.cs.illinois.edu/awshi2/starts-1.4.zip -P $HOME
+- unzip $HOME/starts-1.4.zip -d $HOME/.m2/repository
 - find $HOME/CACHE -name jdeps-cache | while read line; do du -sh $line;         DIR=$(dirname
   ${line#$HOME/CACHE}); if [[ -d ${DIR#jdeps-cache/} ]]; then cp -r $line $DIR; fi;
   done
@@ -29,13 +31,6 @@ cache:
   - $HOME/.m2
   - $HOME/CACHE
 deploy:
-  provider: s3
-  access_key_id: AKIAIGYGO43W76PZMMVA
-  bucket: graylog2-builds
-  region: eu-west-1
-  local-dir: target/assembly
-  secret_access_key:
-    secure: cYHsMgnAI08sz9G1Qb7ku2HoTaSn/OBBmjBzyYswX0/Kvb2asQcEGZGOEfYNTGOwdN6DP7p3axi5o+FPw2MLGGpBVz3tAtwYWTbzJR8kCEuGwb8N6abpdkGIn4AfifQ+vbn8zJrIB6HfGGRpDM9QnEjJFtpJO+2SjODzbZzkymE=
   true:
     branch:
     - master
@@ -46,7 +41,14 @@ deploy:
     - 2.0
     jdk: oraclejdk8
     repo: Graylog2/graylog2-server
+  provider: s3
   skip_cleanup: true
+  bucket: graylog2-builds
+  region: eu-west-1
+  local-dir: target/assembly
+  access_key_id: AKIAIGYGO43W76PZMMVA
+  secret_access_key:
+    secure: cYHsMgnAI08sz9G1Qb7ku2HoTaSn/OBBmjBzyYswX0/Kvb2asQcEGZGOEfYNTGOwdN6DP7p3axi5o+FPw2MLGGpBVz3tAtwYWTbzJR8kCEuGwb8N6abpdkGIn4AfifQ+vbn8zJrIB6HfGGRpDM9QnEjJFtpJO+2SjODzbZzkymE=
 dist: trusty
 env:
   global:
